@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-discord-bg: #313338;
+  --color-discord-sidebar: #2b2d31;
+  --color-discord-card: #1e1f22;
+  --color-discord-blurple: #5865f2;
+  --color-discord-text-light: #dbdee1;
+  --color-discord-text-muted: #949ba4;
+}
+
+:root {
+  --background: #313338;
+  --foreground: #dbdee1;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Custom scrollbar to resemble Discord */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2e3035;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1a1b1e;
+  border-radius: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #111214;
+}
+
+/* Compact IDE Layout Spacing & Text Density Rules */
+.compact-ide {
+  font-size: 11px !important;
+}
+.compact-ide h1, .compact-ide h2, .compact-ide h3, .compact-ide h4, .compact-ide h5 {
+  font-size: 1.15em !important;
+  font-weight: 800 !important;
+}
+.compact-ide p, .compact-ide span, .compact-ide input, .compact-ide button, .compact-ide a {
+  font-size: 11px !important;
+}
+.compact-ide aside, .compact-ide main, .compact-ide header {
+  padding: 6px 12px !important;
+}
+.compact-ide .grid {
+  gap: 12px !important;
+}
+.compact-ide .p-4, .compact-ide .p-6, .compact-ide .p-5, .compact-ide .p-10 {
+  padding: 10px !important;
+}
+.compact-ide .mb-8, .compact-ide .mb-6, .compact-ide .mb-4, .compact-ide .my-12 {
+  margin-bottom: 6px !important;
+  margin-top: 6px !important;
+}
+.compact-ide .py-10, .compact-ide .py-6, .compact-ide .py-4, .compact-ide .py-3 {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+}
+.compact-ide .px-6, .compact-ide .px-4 {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+}
+.compact-ide .aspect-video {
+  aspect-ratio: 21 / 9 !important;
+}
+.compact-ide .space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 8px !important;
+}
+.compact-ide .space-y-3 > :not([hidden]) ~ :not([hidden]) {
+  margin-top: 6px !important;
+}
+
