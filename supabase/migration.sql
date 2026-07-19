@@ -1,3 +1,18 @@
+-- Support standard PostgreSQL/Neon setups by creating mock auth tables/functions if they don't exist
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'auth') THEN
+        CREATE SCHEMA auth;
+        CREATE TABLE auth.users (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+            email text,
+            raw_user_meta_data jsonb
+        );
+        CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS 'SELECT null::uuid;';
+    END IF;
+END
+$$;
+
 -- Create profiles table
 create table if not exists public.profiles (
   id uuid references auth.users on delete cascade primary key,
