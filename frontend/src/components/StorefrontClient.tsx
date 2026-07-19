@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Gamepad2, ArrowRight, Hash, Volume2, User, HelpCircle, Shield, Sparkles, Search, Palette, Settings, Lock, Plus, Send, X, MessageSquare, Check, ShieldCheck, Heart, Radio } from 'lucide-react';
+import { Gamepad2, ArrowRight, Hash, Volume2, User, HelpCircle, Shield, Sparkles, Search, Palette, Settings, Lock, Plus, Send, X, MessageSquare, Check, ShieldCheck, Heart, Radio, Menu, Users } from 'lucide-react';
 
 interface StorefrontClientProps {
   initialGames: any[];
@@ -48,6 +48,8 @@ export default function StorefrontClient({
   const [activeTheme, setActiveTheme] = useState<'discord' | 'itch' | 'neon' | 'custom'>('discord');
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [activeSettingsTab, setActiveSettingsTab] = useState<'identity' | 'themes' | 'moderation' | 'collab' | 'integrations'>('identity');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isMobileRosterOpen, setIsMobileRosterOpen] = useState(false);
 
   // Server management with custom roles, bots, channels & custom logo image URLs
   const [servers, setServers] = useState<ServerObj[]>([
@@ -336,6 +338,8 @@ export default function StorefrontClient({
       setVoiceConnection({ serverName: activeServer.name, channelName: chan.name });
     }
     setActiveChannel(chan.name);
+    setIsMobileSidebarOpen(false);
+    setIsMobileRosterOpen(false);
   };
 
   // Handle game publishing
@@ -575,13 +579,26 @@ export default function StorefrontClient({
       className={`flex-1 flex flex-row min-h-0 ${style.bg} ${style.textLight} transition-colors duration-300 overflow-hidden ${settings.layoutDensity === 'compact' ? 'compact-ide' : ''}`}
     >
       
-      {/* 1st COLUMN: Discord-Style Server Navigation Dock */}
-      <aside className="w-16 bg-[#1e1f22] flex flex-col items-center py-3 gap-2 flex-shrink-0 border-r border-[#1e1f22] overflow-y-auto custom-scrollbar">
-        {/* GodsLink Hub / Storefront */}
-        <div className="relative group">
-          {activeServerId === 'godslink' && (
-            <span className="absolute left-0 top-3 w-1 h-8 bg-white rounded-r-full" />
-          )}
+      {/* Mobile Sidebar Backdrop / Overlay */}
+      {isMobileSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setIsMobileSidebarOpen(false)}
+        />
+      )}
+
+      {/* 1st & 2nd COLUMNS Container (Mobile drawer overlay, desktop inline flex) */}
+      <div className={`md:flex flex-row min-h-0 flex-shrink-0 ${
+        isMobileSidebarOpen ? 'translate-x-0' : 'max-md:-translate-x-full'
+      } max-md:fixed max-md:left-0 max-md:top-0 max-md:bottom-0 max-md:z-50 transition-transform duration-300 h-full`}>
+        
+        {/* 1st COLUMN: Discord-Style Server Navigation Dock */}
+        <aside className="w-16 bg-[#1e1f22] flex flex-col items-center py-3 gap-2 flex-shrink-0 border-r border-[#1e1f22] overflow-y-auto custom-scrollbar h-full">
+          {/* GodsLink Hub / Storefront */}
+          <div className="relative group">
+            {activeServerId === 'godslink' && (
+              <span className="absolute left-0 top-3 w-1 h-8 bg-white rounded-r-full" />
+            )}
           <button 
             onClick={() => { setActiveServerId('godslink'); setActiveChannel('all-games'); }}
             className={`w-12 h-12 rounded-3xl hover:rounded-2xl bg-[#2b2d31] hover:bg-[#5865f2] text-white flex items-center justify-center text-xl transition-all duration-200 overflow-hidden ${
@@ -792,10 +809,36 @@ export default function StorefrontClient({
         </div>
 
       </aside>
+    </div>
 
       {/* 3rd COLUMN: Main Workspace Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         
+        {/* Mobile Top Header Bar */}
+        <div className="h-12 bg-discord-sidebar border-b border-discord-card flex items-center justify-between px-3 md:hidden flex-shrink-0 text-white select-none">
+          <button 
+            onClick={() => setIsMobileSidebarOpen(true)}
+            className="p-1 rounded hover:bg-discord-card text-discord-text-muted hover:text-white transition"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          <div className="font-bold truncate text-sm flex items-center gap-1.5 min-w-0 max-w-[180px]">
+            {activeServer.logoUrl ? (
+              <img src={activeServer.logoUrl} alt="Logo" className="w-4 h-4 rounded-full object-cover flex-shrink-0" />
+            ) : (
+              <span className="flex-shrink-0 text-xs">{activeServer.icon}</span>
+            )}
+            <span className="truncate text-white">{activeServer.name}</span>
+            <span className="text-discord-text-muted font-normal text-xs truncate">/ #{activeChannel}</span>
+          </div>
+          <button 
+            onClick={() => setIsMobileRosterOpen(true)}
+            className="p-1 rounded hover:bg-discord-card text-discord-text-muted hover:text-white transition"
+          >
+            <Users className="w-5 h-5" />
+          </button>
+        </div>
+
         {/* Render STOREFRONT main display */}
         {isStorefront ? (
           <div className="flex-1 flex flex-col overflow-hidden">
@@ -1077,9 +1120,30 @@ export default function StorefrontClient({
 
       </main>
 
-      {/* 4th COLUMN: Active Community Roster (grouped by server roles and bots) */}
-      <aside className="w-60 bg-discord-sidebar border-l border-discord-card p-4 overflow-y-auto custom-scrollbar flex flex-col flex-shrink-0 min-h-0">
+      {/* Mobile Roster Backdrop / Overlay */}
+      {isMobileRosterOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden"
+          onClick={() => setIsMobileRosterOpen(false)}
+        />
+      )}
+
+      {/* 4th COLUMN: Active Community Roster */}
+      <aside className={`w-60 bg-discord-sidebar border-l border-discord-card p-4 overflow-y-auto custom-scrollbar flex flex-col flex-shrink-0 min-h-0 transition-transform duration-300 max-md:fixed max-md:right-0 max-md:top-0 max-md:bottom-0 max-md:z-50 max-md:w-64 max-md:bg-[#2b2d31] max-md:shadow-2xl ${
+        isMobileRosterOpen ? 'translate-x-0' : 'max-md:translate-x-full md:translate-x-0'
+      }`}>
         
+        {/* Mobile Roster Title Bar */}
+        <div className="flex items-center justify-between mb-4 md:hidden">
+          <span className="text-xs font-bold text-white uppercase">Members Roster</span>
+          <button 
+            onClick={() => setIsMobileRosterOpen(false)}
+            className="p-1 rounded hover:bg-discord-card text-discord-text-muted hover:text-white transition"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
         {/* Render standard Roster if GodsLink Hub, otherwise show Custom Server Roster */}
         {isStorefront ? (
           <>
@@ -1278,11 +1342,11 @@ export default function StorefrontClient({
 
       {/* DISCORD-STYLE USER SETTINGS MODAL */}
       {isSettingsOpen && (
-        <div className="fixed inset-0 z-50 bg-[#1e1f22]/85 backdrop-blur-sm flex items-center justify-center p-4 md:p-10 text-[#dbdee1]">
-          <div className="bg-[#2b2d31] w-full max-w-5xl h-[85vh] rounded-xl border border-[#1e1f22] flex flex-row overflow-hidden shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-[#1e1f22]/85 backdrop-blur-sm flex items-center justify-center p-2 md:p-10 text-[#dbdee1]">
+          <div className="bg-[#2b2d31] w-full max-w-5xl h-[90vh] md:h-[85vh] rounded-xl border border-[#1e1f22] flex flex-col md:flex-row overflow-hidden shadow-2xl relative">
             
             {/* Modal Sidebar */}
-            <aside className="w-60 bg-[#2b2d31] p-6 border-r border-[#1e1f22] overflow-y-auto flex flex-col justify-between flex-shrink-0">
+            <aside className="w-full md:w-60 bg-[#2b2d31] p-4 md:p-6 border-b md:border-r border-[#1e1f22] overflow-y-auto flex flex-col md:justify-between flex-shrink-0">
               <div className="space-y-4">
                 <span className="text-[10px] font-extrabold text-[#949ba4] uppercase tracking-wider block mb-2 px-2">
                   User Settings
