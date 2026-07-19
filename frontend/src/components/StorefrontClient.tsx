@@ -677,6 +677,29 @@ export default function StorefrontClient({
           </div>
         </div>
 
+        {/* Mobile Profile Header in Burger Menu */}
+        <div className="p-3 bg-discord-card/50 border-b border-discord-card md:hidden flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-discord-sidebar border border-discord-bg flex items-center justify-center text-sm overflow-hidden flex-shrink-0">
+              {settings.avatarUrl ? (
+                <img src={settings.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                settings.avatar
+              )}
+            </div>
+            <div className="min-w-0 flex flex-col">
+              <span className="text-xs font-bold text-white truncate">{settings.displayName}</span>
+              <span className="text-[9px] text-[#5865f2] uppercase tracking-wider font-extrabold">{settings.role}</span>
+            </div>
+          </div>
+          <button 
+            onClick={() => { setIsSettingsOpen(true); setIsMobileSidebarOpen(false); }}
+            className="text-[10px] bg-discord-blurple hover:bg-[#4752c4] text-white font-bold py-1 px-2.5 rounded transition flex-shrink-0"
+          >
+            Edit Profile
+          </button>
+        </div>
+
         {/* Middle: Navigation Channels List */}
         <div className="flex-1 overflow-y-auto custom-scrollbar p-3 space-y-4">
           <div className="space-y-1">
